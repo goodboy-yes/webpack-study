@@ -1,12 +1,21 @@
 const path = require('path')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const { AutoWebPlugin } = require('web-webpack-plugin');
+
+const autoWebPlugin = new AutoWebPlugin('Pages', {
+    template: './template.html',
+    postEntrys: ['./common.css'],
+    commonsChunk: {
+        name: 'common',// 提取出公共代码 Chunk 的名称
+    },
+})
 
 module.exports = {
-    entry: {
-        app: './main.js'
-    },
+    entry: autoWebPlugin.entry({
+
+    }),
     output: {
-        filename: 'bundle.js',
+        filename: '[name]_[chunkhash:8].js',
         path: path.resolve(__dirname, './dist')
     },
     module: {
@@ -26,9 +35,10 @@ module.exports = {
         ]
     },
     plugins: [
+        autoWebPlugin,
         new MiniCssExtractPlugin({
-            filename: '[name].css',
-        })
+            filename: `[name]_[contenthash:8].css`,
+        }),
     ]
 
 
